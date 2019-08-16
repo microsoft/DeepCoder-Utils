@@ -121,19 +121,19 @@ def get_language(V):
     [Function(
             'MAP ' + l.src,
             ([int], [int]),
-            lambda xs, l=l: map(l.fun, xs),
+            lambda xs, l=l: list(map(l.fun, xs)),
             lambda AB, l=l: l.bounds((AB[0], AB[1]))
         ) for l in lambdas if l.sig==(int, int)] + \
     [Function(
             'FILTER ' + l.src,
             ([int], [int]),
-            lambda xs, l=l: filter(l.fun, xs),
+            lambda xs, l=l: list(filter(l.fun, xs)),
             lambda AB, l=l: [(AB[0], AB[1])],
         ) for l in lambdas if l.sig==(int, bool)] + \
     [Function(
             'COUNT ' + l.src,
             ([int], int),
-            lambda xs, l=l: len(filter(l.fun, xs)),
+            lambda xs, l=l: len(list(filter(l.fun, xs))),
             lambda _, l=l: [(-V, V)],
         ) for l in lambdas if l.sig==(int, bool)] + \
     [Function(
