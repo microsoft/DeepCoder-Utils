@@ -79,74 +79,74 @@ def scanl1_bounds(l, A, B, L):
 def get_language(V):
     Null = V
     lambdas = [
-        Function('IDT',     (int, int),          lambda i: i,                                         lambda (A, B): [(A, B)]),
+        Function('IDT',     (int, int),          lambda i: i,                                         lambda AB: [(AB[0], AB[1])]),
 
-        Function('INC',     (int, int),          lambda i: i+1,                                       lambda (A, B): [(A, B-1)]),
-        Function('DEC',     (int, int),          lambda i: i-1,                                       lambda (A, B): [(A+1, B)]),
-        Function('SHL',     (int, int),          lambda i: i*2,                                       lambda (A, B): [((A+1)/2, B/2)]),
-        Function('SHR',     (int, int),          lambda i: int(float(i)/2),                           lambda (A, B): [(2*A, 2*B)]),
-        Function('doNEG',   (int, int),          lambda i: -i,                                        lambda (A, B): [(-B+1, -A+1)]),
-        Function('MUL3',    (int, int),          lambda i: i*3,                                       lambda (A, B): [((A+2)/3, B/3)]),
-        Function('DIV3',    (int, int),          lambda i: int(float(i)/3),                           lambda (A, B): [(A, B)]),
+        Function('INC',     (int, int),          lambda i: i+1,                                       lambda AB: [(AB[0], AB[1]-1)]),
+        Function('DEC',     (int, int),          lambda i: i-1,                                       lambda AB: [(AB[0]+1, AB[1])]),
+        Function('SHL',     (int, int),          lambda i: i*2,                                       lambda AB: [((AB[0]+1)/2, AB[1]/2)]),
+        Function('SHR',     (int, int),          lambda i: int(float(i)/2),                           lambda AB: [(2*AB[0], 2*AB[1])]),
+        Function('doNEG',   (int, int),          lambda i: -i,                                        lambda AB: [(-AB[1]+1, -AB[0]+1)]),
+        Function('MUL3',    (int, int),          lambda i: i*3,                                       lambda AB: [((AB[0]+2)/3, AB[1]/3)]),
+        Function('DIV3',    (int, int),          lambda i: int(float(i)/3),                           lambda AB: [(AB[0], AB[1])]),
 
-        Function('MUL4',    (int, int),          lambda i: i*4,                                       lambda (A, B): [((A+3)/4, B/4)]),
-        Function('DIV4',    (int, int),          lambda i: int(float(i)/4),                           lambda (A, B): [(A, B)]),
-        Function('SQR',     (int, int),          lambda i: i*i,                                       lambda (A, B): SQR_bounds(A, B)),
+        Function('MUL4',    (int, int),          lambda i: i*4,                                       lambda AB: [((AB[0]+3)/4, AB[1]/4)]),
+        Function('DIV4',    (int, int),          lambda i: int(float(i)/4),                           lambda AB: [(AB[0], AB[1])]),
+        Function('SQR',     (int, int),          lambda i: i*i,                                       lambda AB: SQR_bounds(AB[0], AB[1])),
         #Function('SQRT',    (int, int),          lambda i: int(sqrt(i)),                              lambda (A, B): [(max(0, A*A), B*B)]),
 
-        Function('isPOS',   (int, bool),         lambda i: i > 0,                                     lambda (A, B): [(A, B)]),
-        Function('isNEG',   (int, bool),         lambda i: i < 0,                                     lambda (A, B): [(A, B)]),
-        Function('isODD',   (int, bool),         lambda i: i % 2 == 1,                                lambda (A, B): [(A, B)]),
-        Function('isEVEN',  (int, bool),         lambda i: i % 2 == 0,                                lambda (A, B): [(A, B)]),
+        Function('isPOS',   (int, bool),         lambda i: i > 0,                                     lambda AB: [(AB[0], AB[1])]),
+        Function('isNEG',   (int, bool),         lambda i: i < 0,                                     lambda AB: [(AB[0], AB[1])]),
+        Function('isODD',   (int, bool),         lambda i: i % 2 == 1,                                lambda AB: [(AB[0], AB[1])]),
+        Function('isEVEN',  (int, bool),         lambda i: i % 2 == 0,                                lambda AB: [(AB[0], AB[1])]),
 
-        Function('+',       (int, int, int),     lambda i, j: i+j,                                    lambda (A, B): [(A/2+1, B/2)]),
-        Function('-',       (int, int, int),     lambda i, j: i-j,                                    lambda (A, B): [(A/2+1, B/2)]),
-        Function('*',       (int, int, int),     lambda i, j: i*j,                                    lambda (A, B): MUL_bounds(A, B)),
-        Function('MIN',     (int, int, int),     lambda i, j: min(i, j),                              lambda (A, B): [(A, B)]),
-        Function('MAX',     (int, int, int),     lambda i, j: max(i, j),                              lambda (A, B): [(A, B)]),
+        Function('+',       (int, int, int),     lambda i, j: i+j,                                    lambda AB: [(AB[0]/2+1, AB[1]/2)]),
+        Function('-',       (int, int, int),     lambda i, j: i-j,                                    lambda AB: [(AB[0]/2+1, AB[1]/2)]),
+        Function('*',       (int, int, int),     lambda i, j: i*j,                                    lambda AB: MUL_bounds(AB[0], AB[1])),
+        Function('MIN',     (int, int, int),     lambda i, j: min(i, j),                              lambda AB: [(AB[0], AB[1])]),
+        Function('MAX',     (int, int, int),     lambda i, j: max(i, j),                              lambda AB: [(AB[0], AB[1])]),
     ]
 
     LINQ = [
-        Function('REVERSE', ([int], [int]),      lambda xs: list(reversed(xs)),                       lambda (A, B, L): [(A, B)]),
-        Function('SORT',    ([int], [int]),      lambda xs: sorted(xs),                               lambda (A, B, L): [(A, B)]),
-        Function('TAKE',    (int, [int], [int]), lambda n, xs: xs[:n],                                lambda (A, B, L): [(0,L), (A, B)]),
-        Function('DROP',    (int, [int], [int]), lambda n, xs: xs[n:],                                lambda (A, B, L): [(0,L), (A, B)]),
-        Function('ACCESS',  (int, [int], int),   lambda n, xs: xs[n] if n>=0 and len(xs)>n else Null, lambda (A, B, L): [(0,L), (A, B)]),
-        Function('HEAD',    ([int], int),        lambda xs: xs[0] if len(xs)>0 else Null,             lambda (A, B, L): [(A, B)]),
-        Function('LAST',    ([int], int),        lambda xs: xs[-1] if len(xs)>0 else Null,            lambda (A, B, L): [(A, B)]),
-        Function('MINIMUM', ([int], int),        lambda xs: min(xs) if len(xs)>0 else Null,           lambda (A, B, L): [(A, B)]),
-        Function('MAXIMUM', ([int], int),        lambda xs: max(xs) if len(xs)>0 else Null,           lambda (A, B, L): [(A, B)]),
-        Function('SUM',     ([int], int),        lambda xs: sum(xs),                                  lambda (A, B, L): [(A/L+1, B/L)]),
+        Function('REVERSE', ([int], [int]),      lambda xs: list(reversed(xs)),                       lambda ABL: [(ABL[0], ABL[1])]),
+        Function('SORT',    ([int], [int]),      lambda xs: sorted(xs),                               lambda ABL: [(ABL[0], ABL[1])]),
+        Function('TAKE',    (int, [int], [int]), lambda n, xs: xs[:n],                                lambda ABL: [(0,ABL[2]), (ABL[0], ABL[1])]),
+        Function('DROP',    (int, [int], [int]), lambda n, xs: xs[n:],                                lambda ABL: [(0,ABL[2]), (ABL[0], ABL[1])]),
+        Function('ACCESS',  (int, [int], int),   lambda n, xs: xs[n] if n>=0 and len(xs)>n else Null, lambda ABL: [(0,ABL[2]), (ABL[0], ABL[1])]),
+        Function('HEAD',    ([int], int),        lambda xs: xs[0] if len(xs)>0 else Null,             lambda ABL: [(ABL[0], ABL[1])]),
+        Function('LAST',    ([int], int),        lambda xs: xs[-1] if len(xs)>0 else Null,            lambda ABL: [(ABL[0], ABL[1])]),
+        Function('MINIMUM', ([int], int),        lambda xs: min(xs) if len(xs)>0 else Null,           lambda ABL: [(ABL[0], ABL[1])]),
+        Function('MAXIMUM', ([int], int),        lambda xs: max(xs) if len(xs)>0 else Null,           lambda ABL: [(ABL[0], ABL[1])]),
+        Function('SUM',     ([int], int),        lambda xs: sum(xs),                                  lambda ABL: [(ABL[0]/ABL[2]+1, ABL[1]/ABL[2])]),
     ] + \
     [Function(
             'MAP ' + l.src,
             ([int], [int]),
-            lambda xs, l=l: map(l.fun, xs),
-            lambda (A, B, L), l=l: l.bounds((A, B))
+            lambda xs, l=l: list(map(l.fun, xs)),
+            lambda AB, l=l: l.bounds((AB[0], AB[1]))
         ) for l in lambdas if l.sig==(int, int)] + \
     [Function(
             'FILTER ' + l.src,
             ([int], [int]),
-            lambda xs, l=l: filter(l.fun, xs),
-            lambda (A, B, L), l=l: [(A, B)],
+            lambda xs, l=l: list(filter(l.fun, xs)),
+            lambda AB, l=l: [(AB[0], AB[1])],
         ) for l in lambdas if l.sig==(int, bool)] + \
     [Function(
             'COUNT ' + l.src,
             ([int], int),
-            lambda xs, l=l: len(filter(l.fun, xs)),
-            lambda (A, B, L), l=l: [(-V, V)],
+            lambda xs, l=l: len(list(filter(l.fun, xs))),
+            lambda _, l=l: [(-V, V)],
         ) for l in lambdas if l.sig==(int, bool)] + \
     [Function(
             'ZIPWITH ' + l.src,
             ([int], [int], [int]),
             lambda xs, ys, l=l: [l.fun(x, y) for (x, y) in zip(xs, ys)],
-            lambda (A, B, L), l=l: l.bounds((A, B)) + l.bounds((A, B)),
+            lambda AB, l=l: l.bounds((AB[0], AB[1])) + l.bounds((AB[0], AB[1])),
         ) for l in lambdas if l.sig==(int, int, int)] + \
     [Function(
             'SCANL1 ' + l.src,
             ([int], [int]),
             lambda xs, l=l: list(scanl1(l, xs)),
-            lambda (A, B, L), l=l: scanl1_bounds(l, A, B, L),
+            lambda ABL, l=l: scanl1_bounds(l, ABL[0], ABL[1], ABL[2]),
         ) for l in lambdas if l.sig==(int, int, int)]
 
     return LINQ, lambdas
